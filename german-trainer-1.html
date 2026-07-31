@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="German A1">
+<title>Deutsch Trainer – Personal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0f1a; --surface:#1a1a2e; --surface2:#16213e;
+  --accent:#1565c0; --accentL:#42a5f5; --accent2:#4ecdc4; --accent3:#f5a623;
+  --text:#f0ece2; --muted:#8a8a9a; --card:#1e1e35;
+  --correct:#4caf50; --wrong:#f44336; --radius:16px;
+  --font-head:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
+.app-header{background:linear-gradient(135deg,var(--surface),var(--surface2));padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07);position:sticky;top:0;z-index:100;}
+.app-title{font-family:var(--font-head);font-size:1.5rem;color:var(--accentL);}
+.app-subtitle{font-size:0.72rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;}
+.progress-bar-wrap{margin-top:12px;height:3px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accentL),var(--accent2));border-radius:99px;transition:width 0.5s;width:0%;}
+.nav-tabs{display:flex;background:var(--surface);position:fixed;bottom:0;left:0;right:0;z-index:100;border-top:1px solid rgba(255,255,255,0.07);padding-bottom:env(safe-area-inset-bottom);}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 6px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:var(--font-body);font-size:0.52rem;font-weight:500;text-transform:uppercase;transition:color 0.2s;}
+.nav-tab.active{color:var(--accentL);}
+.nav-tab svg{width:20px;height:20px;margin-bottom:2px;stroke-width:1.5;}
+.screen{display:none;padding:20px;animation:fadeIn 0.3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-title{font-family:var(--font-head);font-size:1.3rem;color:var(--accentL);margin-bottom:6px;}
+.section-desc{color:var(--muted);font-size:0.82rem;margin-bottom:20px;line-height:1.5;}
+/* HOME */
+.home-hero{background:linear-gradient(135deg,var(--surface2),var(--card));border-radius:20px;padding:24px 20px;margin-bottom:16px;border:1px solid rgba(66,165,245,0.2);position:relative;overflow:hidden;}
+.home-hero::before{content:'DE';position:absolute;right:-10px;top:-20px;font-family:var(--font-head);font-size:7rem;color:rgba(66,165,245,0.06);font-weight:700;pointer-events:none;}
+.home-greeting{font-family:var(--font-head);font-size:1.5rem;color:var(--accentL);margin-bottom:6px;}
+.home-desc{font-size:0.85rem;color:var(--muted);line-height:1.6;}
+.gender-note{margin-top:10px;font-size:0.78rem;line-height:1.6;}
+.g-m{color:#6495ed;font-weight:600;}
+.g-f{color:#ff6b6b;font-weight:600;}
+.g-n{color:var(--accent2);font-weight:600;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{background:var(--card);border-radius:var(--radius);padding:14px 10px;text-align:center;border:1px solid rgba(255,255,255,0.06);}
+.stat-num{font-family:var(--font-head);font-size:1.6rem;color:var(--accentL);line-height:1;}
+.stat-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px;}
+.due-box{background:rgba(66,165,245,0.1);border:1px solid rgba(66,165,245,0.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.due-num{font-family:var(--font-head);font-size:2rem;color:var(--accentL);}
+.due-label{font-size:0.82rem;color:var(--muted);}
+.btn-start{background:var(--accentL);color:var(--bg);border:none;border-radius:10px;padding:10px 20px;font-family:var(--font-body);font-size:0.88rem;font-weight:600;cursor:pointer;}
+.goal-box{background:var(--card);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;border:1px solid rgba(78,205,196,0.2);}
+.goal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.goal-title{font-size:0.75rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.07em;}
+.goal-nums{font-size:0.82rem;color:var(--text);}
+.goal-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.goal-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accentL));border-radius:99px;transition:width 0.5s;}
+.goal-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text);border-radius:8px;padding:4px 8px;font-family:var(--font-body);font-size:0.8rem;margin-top:8px;}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.quick-btn{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:16px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:6px;transition:all 0.2s;}
+.quick-btn:active{transform:scale(0.97);}
+.q-icon{font-size:1.3rem;}
+.q-label{font-size:0.82rem;font-weight:500;color:var(--text);}
+.q-sub{font-size:0.7rem;color:var(--muted);}
+.tip-box{background:rgba(78,205,196,0.07);border:1px solid rgba(78,205,196,0.2);border-radius:var(--radius);padding:14px 16px;margin-top:16px;font-size:0.8rem;color:var(--accent2);line-height:1.6;}
+/* VOCAB */
+.topic-filter{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none;}
+.topic-filter::-webkit-scrollbar{display:none;}
+.topic-chip{flex-shrink:0;padding:6px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--muted);font-family:var(--font-body);font-size:0.75rem;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+.topic-chip.active{background:var(--accentL);color:var(--bg);border-color:var(--accentL);font-weight:600;}
+.srs-badge{display:inline-flex;gap:6px;align-items:center;margin-bottom:10px;}
+.srs-pill{font-size:0.65rem;padding:3px 10px;border-radius:99px;font-weight:600;}
+.srs-new{background:rgba(78,205,196,0.2);color:var(--accent2);border:1px solid rgba(78,205,196,0.4);}
+.srs-due{background:rgba(66,165,245,0.2);color:var(--accentL);border:1px solid rgba(66,165,245,0.4);}
+.srs-learned{background:rgba(76,175,80,0.2);color:var(--correct);border:1px solid rgba(76,175,80,0.4);}
+.flashcard{background:var(--card);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,0.08);min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,0.4);margin-bottom:16px;transition:transform 0.12s;}
+.flashcard:active{transform:scale(0.98);}
+.fc-tag{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;}
+.fc-gender{display:inline-block;padding:2px 10px;border-radius:99px;font-size:0.7rem;font-weight:600;margin-bottom:8px;}
+.fc-gm{background:rgba(100,149,237,0.2);color:#6495ed;border:1px solid rgba(100,149,237,0.4);}
+.fc-gf{background:rgba(255,107,107,0.2);color:#ff6b6b;border:1px solid rgba(255,107,107,0.4);}
+.fc-gn{background:rgba(78,205,196,0.2);color:var(--accent2);border:1px solid rgba(78,205,196,0.4);}
+.fc-word{font-size:2rem;color:var(--text);margin-bottom:6px;line-height:1.2;font-family:var(--font-head);}
+.fc-phonetic{font-size:0.82rem;color:var(--muted);font-style:italic;margin-bottom:8px;}
+.fc-hint{font-size:0.78rem;color:var(--accent2);margin-top:12px;opacity:0.8;}
+.fc-trans{display:none;font-size:1.1rem;color:var(--accentL);font-weight:500;margin-top:12px;}
+.fc-ex{display:none;font-size:0.78rem;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.5;}
+.flashcard.revealed .fc-hint{display:none;}
+.flashcard.revealed .fc-trans{display:block;}
+.flashcard.revealed .fc-ex{display:block;}
+.card-count{text-align:center;font-size:0.75rem;color:var(--muted);margin-bottom:8px;}
+.srs-info{text-align:center;font-size:0.72rem;color:var(--muted);margin-bottom:8px;}
+.card-actions{display:flex;gap:8px;margin-top:4px;}
+.btn{flex:1;padding:13px 6px;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.btn:active{transform:scale(0.97);}
+.btn-wrong{background:rgba(244,67,54,0.15);color:#ff6b6b;border:1px solid rgba(244,67,54,0.3);}
+.btn-hard{background:rgba(245,166,35,0.15);color:var(--accent3);border:1px solid rgba(245,166,35,0.3);}
+.btn-correct{background:rgba(76,175,80,0.15);color:var(--correct);border:1px solid rgba(76,175,80,0.3);}
+.btn-primary{background:var(--accentL);color:var(--bg);font-weight:600;}
+.btn-speak{background:rgba(78,205,196,0.15);color:var(--accent2);border:1px solid rgba(78,205,196,0.3);padding:8px 16px;border-radius:99px;font-size:0.78rem;margin-top:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-body);}
+.reveal-row{display:flex;gap:10px;margin-top:4px;}
+/* GRAMMAR */
+.exercise-card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.06);}
+.exercise-num{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px;}
+.exercise-q{font-size:1rem;line-height:1.6;margin-bottom:16px;color:var(--text);}
+.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--accentL);color:var(--accentL);font-weight:600;text-align:center;padding:0 4px;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opt-btn{padding:12px 8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.04);color:var(--text);font-family:var(--font-body);font-size:0.85rem;cursor:pointer;text-align:center;transition:all 0.15s;}
+.opt-btn.ok{background:rgba(76,175,80,0.2);border-color:var(--correct);color:var(--correct);}
+.opt-btn.fail{background:rgba(244,67,54,0.2);border-color:#ff6b6b;color:#ff6b6b;}
+.opt-btn.show{background:rgba(76,175,80,0.1);border-color:rgba(76,175,80,0.4);color:var(--correct);}
+.opt-btn:disabled{cursor:default;}
+.feedback{margin-top:10px;font-size:0.82rem;line-height:1.5;padding:10px 12px;border-radius:8px;display:none;}
+.feedback.ok{background:rgba(76,175,80,0.12);color:#81c784;display:block;}
+.feedback.fail{background:rgba(244,67,54,0.12);color:#e57373;display:block;}
+.gram-score{text-align:center;padding:20px;background:var(--card);border-radius:var(--radius);margin-bottom:20px;border:1px solid rgba(66,165,245,0.2);display:none;}
+.gram-score.visible{display:block;}
+.gram-score-num{font-family:var(--font-head);font-size:2.5rem;color:var(--accentL);}
+/* MY WORDS */
+.add-form{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:20px;border:1px solid rgba(66,165,245,0.2);}
+.form-label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;display:block;}
+.form-input{width:100%;padding:12px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--text);font-family:var(--font-body);font-size:0.95rem;margin-bottom:14px;outline:none;}
+.form-input:focus{border-color:var(--accentL);}
+.btn-add{background:var(--accentL);color:var(--bg);border:none;border-radius:10px;padding:13px 20px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;cursor:pointer;width:100%;}
+.custom-item{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.custom-word{font-size:1.1rem;color:var(--accentL);font-family:var(--font-head);}
+.custom-en{font-size:0.85rem;color:var(--text);}
+.custom-ph{font-size:0.75rem;color:var(--muted);font-style:italic;}
+.btn-delete{background:rgba(244,67,54,0.15);border:1px solid rgba(244,67,54,0.3);color:#ff6b6b;border-radius:8px;padding:6px 10px;font-size:0.75rem;cursor:pointer;font-family:var(--font-body);flex-shrink:0;}
+.empty-state{text-align:center;padding:30px 20px;color:var(--muted);font-size:0.85rem;}
+/* DAME */
+.dame-intro{background:var(--card);border-radius:20px;padding:20px;margin-bottom:20px;border:1px solid rgba(66,165,245,0.25);text-align:center;}
+.dame-avatar{font-size:3rem;margin-bottom:8px;}
+.dame-name{font-family:var(--font-head);font-size:1.3rem;color:var(--accentL);margin-bottom:6px;}
+.dame-bio{font-size:0.82rem;color:var(--muted);line-height:1.5;}
+.dame-tabs{display:flex;gap:10px;margin-bottom:20px;}
+.dame-tab-btn{flex:1;padding:10px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:rgba(255,255,255,0.05);color:var(--muted);font-family:var(--font-body);font-size:0.82rem;cursor:pointer;transition:all 0.15s;}
+.dame-tab-btn.active{background:var(--accentL);color:var(--bg);border-color:var(--accentL);font-weight:600;}
+.dialogue-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+.d-topic-header{display:flex;justify-content:space-between;align-items:center;}
+.d-topic-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent2);}
+.d-title{font-size:0.95rem;color:var(--text);font-weight:500;margin-top:4px;}
+.d-body{display:none;margin-top:14px;border-top:1px solid rgba(255,255,255,0.07);padding-top:14px;}
+.d-body.open{display:block;}
+.d-line{margin-bottom:14px;}
+.d-speaker{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accentL);margin-bottom:4px;}
+.d-speaker.user-speaker{color:var(--accent2);}
+.d-text{font-size:0.9rem;color:var(--text);line-height:1.5;}
+.d-trans{font-size:0.76rem;color:var(--muted);font-style:italic;margin-top:3px;}
+.d-tts{background:rgba(66,165,245,0.15);border:1px solid rgba(66,165,245,0.3);color:var(--accentL);border-radius:99px;padding:4px 12px;font-size:0.72rem;cursor:pointer;margin-top:6px;font-family:var(--font-body);}
+.chat-container{height:300px;overflow-y:auto;background:rgba(0,0,0,0.2);border-radius:var(--radius);padding:14px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;}
+.chat-bubble{max-width:84%;padding:10px 14px;border-radius:16px;font-size:0.85rem;line-height:1.5;}
+.chat-dame{background:rgba(66,165,245,0.1);border:1px solid rgba(66,165,245,0.2);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;}
+.chat-user{background:rgba(78,205,196,0.12);border:1px solid rgba(78,205,196,0.2);color:var(--text);align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-thinking{color:var(--muted);font-size:0.78rem;font-style:italic;align-self:flex-start;padding:8px 14px;}
+.chat-input-row{display:flex;gap:10px;}
+.chat-input{flex:1;padding:12px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--text);font-family:var(--font-body);font-size:0.9rem;outline:none;}
+.chat-input:focus{border-color:var(--accentL);}
+.btn-send{background:var(--accentL);color:var(--bg);border:none;border-radius:10px;padding:12px 18px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;cursor:pointer;}
+/* STATS */
+.stats-card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.06);}
+.stats-card-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:14px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stats-mini{background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;text-align:center;}
+.stats-mini-num{font-family:var(--font-head);font-size:1.4rem;color:var(--accent2);line-height:1;}
+.stats-mini-label{font-size:0.65rem;color:var(--muted);margin-top:4px;}
+.accuracy-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-top:8px;}
+.accuracy-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accentL));border-radius:99px;transition:width 0.8s;}
+.difficult-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.difficult-item:last-child{border-bottom:none;}
+.difficult-word{font-size:1rem;color:var(--accentL);font-family:var(--font-head);}
+.difficult-en{font-size:0.82rem;color:var(--text);}
+.difficult-score{font-size:0.75rem;color:#ff6b6b;font-weight:600;}
+.topic-progress-item{margin-bottom:12px;}
+.topic-progress-label{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text);margin-bottom:5px;}
+.topic-progress-pct{color:var(--muted);}
+.topic-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.topic-bar-fill{height:100%;border-radius:99px;transition:width 0.8s;}
+.btn-reset{background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);color:#ff6b6b;border-radius:10px;padding:10px 16px;font-family:var(--font-body);font-size:0.82rem;cursor:pointer;margin-top:16px;width:100%;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-title">🇩🇪 Deutsch Trainer</div>
+  <div class="app-subtitle">Personal Trainer · SRS · A1–A2</div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="home-hero">
+    <div class="home-greeting">Willkommen! – Welcome!</div>
+    <div class="home-desc">Your personal German trainer with Spaced Repetition. The system remembers which words you find difficult and repeats them intelligently.</div>
+    <div class="gender-note">German nouns: <span class="g-m">der</span> (masculine) · <span class="g-f">die</span> (feminine) · <span class="g-n">das</span> (neuter)</div>
+  </div>
+
+  <div class="due-box">
+    <div><div class="due-num" id="dueCount">0</div><div class="due-label">cards due today</div></div>
+    <button class="btn-start" onclick="startReview()">Study ▶</button>
+  </div>
+
+  <div class="goal-box">
+    <div class="goal-header">
+      <span class="goal-title">Daily Goal</span>
+      <span class="goal-nums" id="goalNums">0 / 10 cards</span>
+    </div>
+    <div class="goal-bar"><div class="goal-fill" id="goalFill" style="width:0%"></div></div>
+    <select class="goal-select" id="goalSelect" onchange="setGoal(this.value)">
+      <option value="5">Goal: 5 cards/day</option>
+      <option value="10" selected>Goal: 10 cards/day</option>
+      <option value="20">Goal: 20 cards/day</option>
+      <option value="30">Goal: 30 cards/day</option>
+    </select>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="stat-seen">0</div><div class="stat-label">Seen</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-acc">0%</div><div class="stat-label">Accuracy</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">Streak</div></div>
+  </div>
+
+  <div style="font-family:var(--font-head);font-size:1rem;color:var(--muted);margin-bottom:12px;">Quick Start</div>
+  <div class="quick-grid">
+    <div class="quick-btn" onclick="switchTab('vocab')"><div class="q-icon">🃏</div><div class="q-label">Vocabulary</div><div class="q-sub">SRS flashcards · 100 words</div></div>
+    <div class="quick-btn" onclick="switchTab('grammar')"><div class="q-icon">📝</div><div class="q-label">Grammar</div><div class="q-sub">12 exercises</div></div>
+    <div class="quick-btn" onclick="switchTab('dame')"><div class="q-icon">👩‍🏫</div><div class="q-label">Dr. Müller</div><div class="q-sub">Dialogues & AI chat</div></div>
+    <div class="quick-btn" onclick="switchTab('mywords')"><div class="q-icon">✏️</div><div class="q-label">My Words</div><div class="q-sub">Custom vocab + AI translation</div></div>
+  </div>
+  <div class="tip-box">💡 <strong>SRS Tip:</strong> Wrong = card returns tomorrow. Hard = same interval. Right = interval doubles. After 7+ days the word is "learned".</div>
+</div>
+
+<!-- VOCAB -->
+<div class="screen" id="screen-vocab">
+  <div class="section-title">Vocabulary</div>
+  <div class="section-desc">Due cards appear first. Three ratings – the SRS learns with you!</div>
+  <div class="topic-filter">
+    <button class="topic-chip active" onclick="setTopic(0)" id="chip-0">All</button>
+    <button class="topic-chip" onclick="setTopic(1)" id="chip-1">Basics</button>
+    <button class="topic-chip" onclick="setTopic(2)" id="chip-2">🍽 Food</button>
+    <button class="topic-chip" onclick="setTopic(3)" id="chip-3">✈️ Travel</button>
+    <button class="topic-chip" onclick="setTopic(4)" id="chip-4">🏥 Health</button>
+    <button class="topic-chip" onclick="setTopic(5)" id="chip-5">🎨 Colours</button>
+    <button class="topic-chip" onclick="setTopic(6)" id="chip-6">🕐 Numbers</button>
+    <button class="topic-chip" onclick="setTopic(99)" id="chip-99">✏️ Mine</button>
+  </div>
+  <div class="card-count" id="cardCount">Card 1 of 100</div>
+  <div class="srs-info" id="srsInfo"></div>
+  <div class="flashcard" id="flashcard" onclick="revealCard()">
+    <div class="fc-tag" id="fcTag">Noun</div>
+    <div id="fcGender"></div>
+    <div class="srs-badge" id="srsBadge"></div>
+    <div class="fc-word" id="fcWord">das Haus</div>
+    <div class="fc-phonetic" id="fcPhonetic">/das haʊs/</div>
+    <button class="btn-speak" onclick="speakCard(event)">🔊 Listen</button>
+    <div class="fc-hint">Tap for translation</div>
+    <div class="fc-trans" id="fcTrans">the house</div>
+    <div class="fc-ex" id="fcEx">"Das ist mein Haus." – That is my house.</div>
+  </div>
+  <div class="card-actions" id="cardActions" style="display:none">
+    <button class="btn btn-wrong" onclick="rateCard(0)">✗ Wrong</button>
+    <button class="btn btn-hard" onclick="rateCard(1)">~ Hard</button>
+    <button class="btn btn-correct" onclick="rateCard(2)">✓ Right</button>
+  </div>
+  <div class="reveal-row" id="revealAction">
+    <button class="btn btn-primary" onclick="revealCard()" style="flex:1">Show translation</button>
+  </div>
+</div>
+
+<!-- GRAMMAR -->
+<div class="screen" id="screen-grammar">
+  <div class="section-title">Grammar</div>
+  <div class="section-desc">The most common A1–A2 patterns. Instant feedback with explanations.</div>
+  <div class="gram-score" id="gramScore">
+    <div class="gram-score-num" id="scoreNum">0/0</div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">Exercises completed!</div>
+    <button class="btn btn-primary" style="margin-top:14px;max-width:200px" onclick="resetGrammar()">Start again</button>
+  </div>
+  <div id="gramExercises"></div>
+</div>
+
+<!-- DR. MÜLLER -->
+<div class="screen" id="screen-dame">
+  <div class="dame-intro">
+    <div class="dame-avatar">👩‍🏫</div>
+    <div class="dame-name">Frau Dr. Müller</div>
+    <div class="dame-bio">Klug, direkt und charmant. Dr. Müller ist Professorin für Germanistik und liebt Gespräche über Literatur, Musik, Reisen, Philosophie und das tägliche Leben. Your German conversation partner par excellence.</div>
+  </div>
+  <div class="dame-tabs">
+    <button class="dame-tab-btn active" onclick="showDameTab('dialogues',event)">📖 Read dialogues</button>
+    <button class="dame-tab-btn" onclick="showDameTab('chat',event)">💬 Free conversation</button>
+  </div>
+  <div id="dame-dialogues"></div>
+  <div id="dame-chat" style="display:none">
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;line-height:1.5;">Write to Dr. Müller in German. She replies in German and gently corrects your mistakes.</div>
+    <div class="chat-container" id="chatContainer">
+      <div class="chat-bubble chat-dame">Guten Tag! Ich bin Frau Dr. Müller. Es freut mich sehr, Deutsch mit Ihnen zu üben! Worüber möchten Sie heute sprechen?</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Write in German..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="btn-send" onclick="sendMessage()">➤</button>
+    </div>
+    <div style="font-size:0.7rem;color:var(--muted);margin-top:8px;text-align:center;">Requires internet · Pollinations AI (free)</div>
+  </div>
+</div>
+
+<!-- MY WORDS -->
+<div class="screen" id="screen-mywords">
+  <div class="section-title">My Words</div>
+  <div class="section-desc">Enter an English word → automatically translate to German. Then add to your study rotation!</div>
+  <div class="add-form">
+    <label class="form-label">1. Enter English word</label>
+    <div style="display:flex;gap:10px;margin-bottom:6px;">
+      <input class="form-input" id="inp-english" type="text" placeholder="e.g. bicycle, good morning..." style="margin-bottom:0;flex:1">
+      <button id="btn-translate" onclick="translateWord()" style="background:var(--accentL);color:var(--bg);border:none;border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔄 Translate</button>
+    </div>
+    <div id="translate-status" style="font-size:0.78rem;color:var(--accent2);margin-bottom:14px;min-height:18px;"></div>
+    <label class="form-label">German word (auto-filled)</label>
+    <input class="form-input" id="inp-german" type="text" placeholder="appears automatically...">
+    <label class="form-label">2. Enter English example sentence</label>
+    <div style="display:flex;gap:10px;margin-bottom:6px;">
+      <input class="form-input" id="inp-example-en" type="text" placeholder="e.g. I ride my bicycle every day." style="margin-bottom:0;flex:1">
+      <button id="btn-translate-ex" onclick="translateExample()" style="background:rgba(78,205,196,0.3);color:var(--accent2);border:1px solid rgba(78,205,196,0.5);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔄 Translate</button>
+    </div>
+    <div id="translate-ex-status" style="font-size:0.78rem;color:var(--accent2);margin-bottom:14px;min-height:18px;"></div>
+    <label class="form-label">Example sentence in German (auto-filled)</label>
+    <input class="form-input" id="inp-example-de" type="text" placeholder="appears automatically...">
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;">All fields can be edited manually.</div>
+    <button class="btn-add" onclick="addCustomWord()">+ Add to study rotation</button>
+  </div>
+  <div id="customList"><div class="empty-state">No custom words yet.<br>Enter an English word and tap Translate!</div></div>
+</div>
+
+<!-- STATS -->
+<div class="screen" id="screen-stats">
+  <div class="section-title">Statistics</div>
+  <div class="section-desc">Your personal learning progress.</div>
+  <div class="stats-card">
+    <div class="stats-card-title">Overall Progress</div>
+    <div class="stats-grid">
+      <div class="stats-mini"><div class="stats-mini-num" id="st-seen">0</div><div class="stats-mini-label">Seen</div></div>
+      <div class="stats-mini"><div class="stats-mini-num" id="st-learned">0</div><div class="stats-mini-label">Learned</div></div>
+      <div class="stats-mini"><div class="stats-mini-num" id="st-correct">0</div><div class="stats-mini-label">Correct</div></div>
+      <div class="stats-mini"><div class="stats-mini-num" id="st-wrong">0</div><div class="stats-mini-label">Wrong</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:0.75rem;color:var(--muted);">Overall accuracy</div>
+    <div class="accuracy-bar"><div class="accuracy-fill" id="accBar" style="width:0%"></div></div>
+    <div style="text-align:right;font-size:0.75rem;color:var(--accentL);margin-top:4px;" id="accPct">0%</div>
+  </div>
+  <div class="stats-card">
+    <div class="stats-card-title">Progress by Topic</div>
+    <div id="topicProgressBars"></div>
+  </div>
+  <div class="stats-card">
+    <div class="stats-card-title">Most Difficult Words</div>
+    <div id="difficultList"><div class="empty-state">No mistakes yet – keep going!</div></div>
+  </div>
+  <div class="stats-card">
+    <div class="stats-card-title">Today</div>
+    <div class="stats-grid">
+      <div class="stats-mini"><div class="stats-mini-num" id="st-due">0</div><div class="stats-mini-label">Due</div></div>
+      <div class="stats-mini"><div class="stats-mini-num" id="st-new">0</div><div class="stats-mini-label">New</div></div>
+    </div>
+  </div>
+  <button class="btn-reset" onclick="resetAllData()">⚠ Reset all progress</button>
+</div>
+
+<!-- NAV -->
+<nav class="nav-tabs">
+  <button class="nav-tab active" onclick="switchTab('home')" id="tab-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    Home
+  </button>
+  <button class="nav-tab" onclick="switchTab('vocab')" id="tab-vocab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    Vocab
+  </button>
+  <button class="nav-tab" onclick="switchTab('grammar')" id="tab-grammar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Grammar
+  </button>
+  <button class="nav-tab" onclick="switchTab('dame')" id="tab-dame">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Dr. Müller
+  </button>
+  <button class="nav-tab" onclick="switchTab('mywords')" id="tab-mywords">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+    Mine
+  </button>
+  <button class="nav-tab" onclick="switchTab('stats')" id="tab-stats">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Stats
+  </button>
+</nav>
+
+<script>
+// ==================== VOCABULARY ====================
+var vocab = [
+  {id:'g01',w:'das Haus',ph:'/das haʊs/',tr:'the house',ex:'"Das ist mein Haus." – That is my house.',tag:'Noun',g:'das',top:1},
+  {id:'g02',w:'das Wasser',ph:'/das ˈvasər/',tr:'the water',ex:'"Ich trinke Wasser." – I drink water.',tag:'Noun',g:'das',top:1},
+  {id:'g03',w:'das Buch',ph:'/das buːx/',tr:'the book',ex:'"Das Buch ist interessant." – The book is interesting.',tag:'Noun',g:'das',top:1},
+  {id:'g04',w:'die Zeit',ph:'/diː tsaɪt/',tr:'the time',ex:'"Wie spät ist es?" – What time is it?',tag:'Noun',g:'die',top:1},
+  {id:'g05',w:'der Freund',ph:'/deːr frɔʏnt/',tr:'the friend (male)',ex:'"Er ist mein bester Freund." – He is my best friend.',tag:'Noun',g:'der',top:1},
+  {id:'g06',w:'das Essen',ph:'/das ˈɛsən/',tr:'the food / meal',ex:'"Das Essen schmeckt gut." – The food tastes good.',tag:'Noun',g:'das',top:1},
+  {id:'g07',w:'die Arbeit',ph:'/diː ˈaʁbaɪt/',tr:'the work / job',ex:'"Ich arbeite von zu Hause." – I work from home.',tag:'Noun',g:'die',top:1},
+  {id:'g08',w:'der Tag',ph:'/deːr taːk/',tr:'the day',ex:'"Einen schönen Tag!" – Have a nice day!',tag:'Noun',g:'der',top:1},
+  {id:'g09',w:'die Hand',ph:'/diː hant/',tr:'the hand',ex:'"Bitte wasch deine Hände." – Please wash your hands.',tag:'Noun',g:'die',top:1},
+  {id:'g10',w:'das Auto',ph:'/das ˈaʊtoː/',tr:'the car',ex:'"Mein Auto ist rot." – My car is red.',tag:'Noun',g:'das',top:1},
+  {id:'g11',w:'schön',ph:'/ʃøːn/',tr:'beautiful / nice',ex:'"Was für ein schöner Garten!" – What a beautiful garden!',tag:'Adjective',g:'',top:1},
+  {id:'g12',w:'glücklich',ph:'/ˈɡlʏklɪç/',tr:'happy',ex:'"Ich bin heute sehr glücklich." – I am very happy today.',tag:'Adjective',g:'',top:1},
+  {id:'g13',w:'groß',ph:'/ɡroːs/',tr:'big / tall',ex:'"Das ist eine große Stadt." – That is a big city.',tag:'Adjective',g:'',top:1},
+  {id:'g14',w:'klein',ph:'/klaɪn/',tr:'small / little',ex:'"Ich habe einen kleinen Garten." – I have a small garden.',tag:'Adjective',g:'',top:1},
+  {id:'g15',w:'gut',ph:'/ɡuːt/',tr:'good',ex:'"Das Wetter ist heute gut." – The weather is good today.',tag:'Adjective',g:'',top:1},
+  {id:'g16',w:'essen',ph:'/ˈɛsən/',tr:'to eat',ex:'"Ich esse um sieben Uhr." – I eat at seven o\'clock.',tag:'Verb',g:'',top:1},
+  {id:'g17',w:'trinken',ph:'/ˈtrɪŋkən/',tr:'to drink',ex:'"Ich trinke gerne Kaffee." – I like to drink coffee.',tag:'Verb',g:'',top:1},
+  {id:'g18',w:'gehen',ph:'/ˈɡeːən/',tr:'to go / to walk',ex:'"Lass uns zum Markt gehen." – Let\'s go to the market.',tag:'Verb',g:'',top:1},
+  {id:'g19',w:'sehen',ph:'/ˈzeːən/',tr:'to see',ex:'"Ich kann die Berge sehen." – I can see the mountains.',tag:'Verb',g:'',top:1},
+  {id:'g20',w:'sprechen',ph:'/ˈʃprɛçən/',tr:'to speak',ex:'"Sprechen Sie Deutsch?" – Do you speak German?',tag:'Verb',g:'',top:1},
+  {id:'g21',w:'der Morgen',ph:'/deːr ˈmɔrɡən/',tr:'the morning',ex:'"Guten Morgen!" – Good morning!',tag:'Noun',g:'der',top:1},
+  {id:'g22',w:'der Abend',ph:'/deːr ˈaːbənt/',tr:'the evening',ex:'"Guten Abend!" – Good evening!',tag:'Noun',g:'der',top:1},
+  {id:'g23',w:'die Familie',ph:'/diː faˈmiːliə/',tr:'the family',ex:'"Ich liebe meine Familie." – I love my family.',tag:'Noun',g:'die',top:1},
+  {id:'g24',w:'die Straße',ph:'/diː ˈʃtraːsə/',tr:'the street',ex:'"Ich wohne in einer ruhigen Straße." – I live on a quiet street.',tag:'Noun',g:'die',top:1},
+  {id:'g25',w:'die Schule',ph:'/diː ˈʃuːlə/',tr:'the school',ex:'"Die Schule ist hier in der Nähe." – The school is near here.',tag:'Noun',g:'die',top:1},
+  {id:'g26',w:'das Geld',ph:'/das ɡɛlt/',tr:'the money',ex:'"Ich brauche etwas Geld." – I need some money.',tag:'Noun',g:'das',top:1},
+  {id:'g27',w:'die Stadt',ph:'/diː ʃtat/',tr:'the city / town',ex:'"Berlin ist eine schöne Stadt." – Berlin is a beautiful city.',tag:'Noun',g:'die',top:1},
+  {id:'g28',w:'die Musik',ph:'/diː muˈziːk/',tr:'the music',ex:'"Ich liebe klassische Musik." – I love classical music.',tag:'Noun',g:'die',top:1},
+  {id:'g29',w:'lesen',ph:'/ˈleːzən/',tr:'to read',ex:'"Ich lese jede Woche ein Buch." – I read a book every week.',tag:'Verb',g:'',top:1},
+  {id:'g30',w:'schreiben',ph:'/ˈʃraɪbən/',tr:'to write',ex:'"Bitte schreiben Sie Ihren Namen." – Please write your name.',tag:'Verb',g:'',top:1},
+  {id:'g31',w:'kaufen',ph:'/ˈkaʊfən/',tr:'to buy',ex:'"Ich möchte eine Zeitung kaufen." – I want to buy a newspaper.',tag:'Verb',g:'',top:1},
+  {id:'g32',w:'spazieren',ph:'/ʃpaˈtsiːrən/',tr:'to walk / stroll',ex:'"Ich gehe jeden Morgen spazieren." – I go for a walk every morning.',tag:'Verb',g:'',top:1},
+  {id:'g33',w:'schlafen',ph:'/ˈʃlaːfən/',tr:'to sleep',ex:'"Ich schlafe acht Stunden." – I sleep eight hours.',tag:'Verb',g:'',top:1},
+  {id:'g34',w:'öffnen',ph:'/ˈœfnən/',tr:'to open',ex:'"Bitte öffnen Sie das Fenster." – Please open the window.',tag:'Verb',g:'',top:1},
+  {id:'g35',w:'alt',ph:'/alt/',tr:'old',ex:'"Das ist ein altes Gebäude." – That is an old building.',tag:'Adjective',g:'',top:1},
+  {id:'g36',w:'neu',ph:'/nɔʏ/',tr:'new',ex:'"Ich habe ein neues Telefon." – I have a new phone.',tag:'Adjective',g:'',top:1},
+  {id:'g37',w:'frei',ph:'/fraɪ/',tr:'free / available',ex:'"Ist dieser Platz frei?" – Is this seat free?',tag:'Adjective',g:'',top:1},
+  {id:'g38',w:'heiß',ph:'/haɪs/',tr:'hot',ex:'"Der Kaffee ist sehr heiß." – The coffee is very hot.',tag:'Adjective',g:'',top:1},
+  {id:'g39',w:'kalt',ph:'/kalt/',tr:'cold',ex:'"Das Wasser ist kalt." – The water is cold.',tag:'Adjective',g:'',top:1},
+  {id:'g40',w:'hier',ph:'/hiːr/',tr:'here',ex:'"Komm bitte her." – Come here, please.',tag:'Adverb',g:'',top:1},
+  {id:'g41',w:'dort',ph:'/dɔrt/',tr:'there',ex:'"Das Geschäft ist dort drüben." – The shop is over there.',tag:'Adverb',g:'',top:1},
+  {id:'g42',w:'heute',ph:'/ˈhɔʏtə/',tr:'today',ex:'"Was machst du heute?" – What are you doing today?',tag:'Adverb',g:'',top:1},
+  {id:'g43',w:'morgen',ph:'/ˈmɔrɡən/',tr:'tomorrow',ex:'"Bis morgen!" – See you tomorrow!',tag:'Adverb',g:'',top:1},
+  {id:'g44',w:'bitte',ph:'/ˈbɪtə/',tr:'please / you\'re welcome',ex:'"Einen Kaffee, bitte." – A coffee, please.',tag:'Expression',g:'',top:1},
+  {id:'g45',w:'danke',ph:'/ˈdaŋkə/',tr:'thank you',ex:'"Vielen Dank!" – Thank you very much!',tag:'Expression',g:'',top:1},
+  {id:'g46',w:'Entschuldigung',ph:'/ɛntˈʃʊldɪɡʊŋ/',tr:'sorry / excuse me',ex:'"Entschuldigung, wo ist der Bahnhof?" – Excuse me, where is the station?',tag:'Expression',g:'',top:1},
+  {id:'g47',w:'Hallo',ph:'/haˈloː/',tr:'hello',ex:'"Hallo! Wie geht es Ihnen?" – Hello! How are you?',tag:'Expression',g:'',top:1},
+  {id:'g48',w:'Auf Wiedersehen',ph:'/aʊf ˈviːdərˌzeːən/',tr:'goodbye',ex:'"Auf Wiedersehen! Bis bald!" – Goodbye! See you soon!',tag:'Expression',g:'',top:1},
+  {id:'g49',w:'ja',ph:'/jaː/',tr:'yes',ex:'"Ja, ich verstehe." – Yes, I understand.',tag:'Expression',g:'',top:1},
+  {id:'g50',w:'nein',ph:'/naɪn/',tr:'no',ex:'"Nein, danke." – No, thank you.',tag:'Expression',g:'',top:1},
+  {id:'g51',w:'helfen',ph:'/ˈhɛlfən/',tr:'to help',ex:'"Können Sie mir bitte helfen?" – Can you help me, please?',tag:'Verb',g:'',top:1},
+  {id:'g52',w:'verstehen',ph:'/fɛrˈʃteːən/',tr:'to understand',ex:'"Ich verstehe nicht." – I don\'t understand.',tag:'Verb',g:'',top:1},
+  {id:'g53',w:'wissen',ph:'/ˈvɪsən/',tr:'to know (a fact)',ex:'"Ich weiß das nicht." – I don\'t know that.',tag:'Verb',g:'',top:1},
+  {id:'g54',w:'wollen',ph:'/ˈvɔlən/',tr:'to want',ex:'"Ich will Deutsch lernen." – I want to learn German.',tag:'Verb',g:'',top:1},
+  {id:'g55',w:'brauchen',ph:'/ˈbraʊxən/',tr:'to need',ex:'"Ich brauche mehr Übung." – I need more practice.',tag:'Verb',g:'',top:1},
+  {id:'g56',w:'mögen',ph:'/ˈmøːɡən/',tr:'to like',ex:'"Ich mag klassische Musik." – I like classical music.',tag:'Verb',g:'',top:1},
+  {id:'g57',w:'kommen',ph:'/ˈkɔmən/',tr:'to come',ex:'"Bitte kommen Sie herein." – Please come in.',tag:'Verb',g:'',top:1},
+  {id:'g58',w:'geben',ph:'/ˈɡeːbən/',tr:'to give',ex:'"Können Sie mir das Buch geben?" – Can you give me the book?',tag:'Verb',g:'',top:1},
+  {id:'g59',w:'finden',ph:'/ˈfɪndən/',tr:'to find',ex:'"Ich kann meine Schlüssel nicht finden." – I can\'t find my keys.',tag:'Verb',g:'',top:1},
+  {id:'g60',w:'denken',ph:'/ˈdɛŋkən/',tr:'to think',ex:'"Ich denke, das ist eine gute Idee." – I think that\'s a good idea.',tag:'Verb',g:'',top:1},
+  // Food (top:2)
+  {id:'g61',w:'das Frühstück',ph:'/das ˈfryːʃtʏk/',tr:'breakfast',ex:'"Das Frühstück ist um acht Uhr." – Breakfast is at eight.',tag:'Noun',g:'das',top:2},
+  {id:'g62',w:'das Mittagessen',ph:'/das ˈmɪtaːkˌɛsən/',tr:'lunch',ex:'"Lass uns zusammen Mittagessen." – Let\'s have lunch together.',tag:'Noun',g:'das',top:2},
+  {id:'g63',w:'das Abendessen',ph:'/das ˈaːbəntˌɛsən/',tr:'dinner',ex:'"Das Abendessen ist fertig!" – Dinner is ready!',tag:'Noun',g:'das',top:2},
+  {id:'g64',w:'die Speisekarte',ph:'/diː ˈʃpaɪzəˌkaʁtə/',tr:'the menu',ex:'"Kann ich bitte die Speisekarte sehen?" – Can I see the menu?',tag:'Noun',g:'die',top:2},
+  {id:'g65',w:'der Kellner',ph:'/deːr ˈkɛlnər/',tr:'the waiter',ex:'"Entschuldigung, Herr Kellner!" – Excuse me, waiter!',tag:'Noun',g:'der',top:2},
+  {id:'g66',w:'die Rechnung',ph:'/diː ˈrɛçnʊŋ/',tr:'the bill',ex:'"Die Rechnung, bitte." – The bill, please.',tag:'Noun',g:'die',top:2},
+  {id:'g67',w:'lecker',ph:'/ˈlɛkər/',tr:'delicious / tasty',ex:'"Diese Suppe ist absolut lecker." – This soup is absolutely delicious.',tag:'Adjective',g:'',top:2},
+  {id:'g68',w:'vegetarisch',ph:'/veɡeˈtaːrɪʃ/',tr:'vegetarian',ex:'"Haben Sie vegetarische Gerichte?" – Do you have vegetarian dishes?',tag:'Adjective',g:'',top:2},
+  {id:'g69',w:'bestellen',ph:'/bəˈʃtɛlən/',tr:'to order',ex:'"Ich möchte den Fisch bestellen." – I would like to order the fish.',tag:'Verb',g:'',top:2},
+  {id:'g70',w:'das Trinkgeld',ph:'/das ˈtrɪŋkˌɡɛlt/',tr:'the tip',ex:'"Sollen wir Trinkgeld geben?" – Shall we leave a tip?',tag:'Noun',g:'das',top:2},
+  // Travel (top:3)
+  {id:'g71',w:'der Flughafen',ph:'/deːr ˈfluːkˌhaːfən/',tr:'the airport',ex:'"Der Flughafen ist sehr belebt." – The airport is very busy.',tag:'Noun',g:'der',top:3},
+  {id:'g72',w:'der Reisepass',ph:'/deːr ˈraɪzəˌpas/',tr:'the passport',ex:'"Vergiss deinen Reisepass nicht!" – Don\'t forget your passport!',tag:'Noun',g:'der',top:3},
+  {id:'g73',w:'die Fahrkarte',ph:'/diː ˈfaːrˌkaʁtə/',tr:'the ticket',ex:'"Ich brauche eine Rückfahrkarte." – I need a return ticket.',tag:'Noun',g:'die',top:3},
+  {id:'g74',w:'das Hotel',ph:'/das hoˈtɛl/',tr:'the hotel',ex:'"Ich habe ein Hotel gebucht." – I booked a hotel.',tag:'Noun',g:'das',top:3},
+  {id:'g75',w:'der Zug',ph:'/deːr tsuːk/',tr:'the train',ex:'"Der Zug fährt um neun ab." – The train leaves at nine.',tag:'Noun',g:'der',top:3},
+  {id:'g76',w:'der Bahnsteig',ph:'/deːr ˈbaːnˌʃtaɪk/',tr:'the platform',ex:'"Der Zug fährt von Gleis drei ab." – The train leaves from platform three.',tag:'Noun',g:'der',top:3},
+  {id:'g77',w:'das Gepäck',ph:'/das ɡəˈpɛk/',tr:'the luggage',ex:'"Mein Gepäck ist sehr schwer." – My luggage is very heavy.',tag:'Noun',g:'das',top:3},
+  {id:'g78',w:'die Reise',ph:'/diː ˈraɪzə/',tr:'the journey / trip',ex:'"Eine gute Reise!" – Have a safe journey!',tag:'Noun',g:'die',top:3},
+  {id:'g79',w:'die Verspätung',ph:'/diː fɛrˈʃpɛːtʊŋ/',tr:'the delay',ex:'"Es gibt eine Verspätung von zwanzig Minuten." – There is a delay of twenty minutes.',tag:'Noun',g:'die',top:3},
+  {id:'g80',w:'ankommen',ph:'/ˈanˌkɔmən/',tr:'to arrive',ex:'"Wir kommen um Mittag an." – We arrive at noon.',tag:'Verb',g:'',top:3},
+  // Health (top:4)
+  {id:'g81',w:'der Kopf',ph:'/deːr kɔpf/',tr:'the head',ex:'"Ich habe Kopfschmerzen." – I have a headache.',tag:'Noun',g:'der',top:4},
+  {id:'g82',w:'der Rücken',ph:'/deːr ˈrʏkən/',tr:'the back',ex:'"Mein Rücken tut weh." – My back hurts.',tag:'Noun',g:'der',top:4},
+  {id:'g83',w:'der Bauch',ph:'/deːr baʊx/',tr:'the stomach / belly',ex:'"Ich habe Bauchschmerzen." – I have a stomach ache.',tag:'Noun',g:'der',top:4},
+  {id:'g84',w:'der Arzt',ph:'/deːr aːrtst/',tr:'the doctor (male)',ex:'"Ich muss zum Arzt." – I need to see a doctor.',tag:'Noun',g:'der',top:4},
+  {id:'g85',w:'das Medikament',ph:'/das medikaˈmɛnt/',tr:'the medicine',ex:'"Nehmen Sie das Medikament zweimal täglich." – Take this medicine twice a day.',tag:'Noun',g:'das',top:4},
+  {id:'g86',w:'wehtun',ph:'/ˈveːˌtuːn/',tr:'to hurt / to ache',ex:'"Tut es hier weh?" – Does it hurt here?',tag:'Verb',g:'',top:4},
+  {id:'g87',w:'müde',ph:'/ˈmyːdə/',tr:'tired',ex:'"Ich fühle mich sehr müde." – I feel very tired.',tag:'Adjective',g:'',top:4},
+  {id:'g88',w:'gesund',ph:'/ɡəˈzʊnt/',tr:'healthy',ex:'"Spazierengehen ist sehr gesund." – Walking is very healthy.',tag:'Adjective',g:'',top:4},
+  {id:'g89',w:'das Fieber',ph:'/das ˈfiːbər/',tr:'the fever',ex:'"Er hat hohes Fieber." – He has a high fever.',tag:'Noun',g:'das',top:4},
+  {id:'g90',w:'die Apotheke',ph:'/diː apoˈteːkə/',tr:'the pharmacy',ex:'"Gibt es hier eine Apotheke?" – Is there a pharmacy near here?',tag:'Noun',g:'die',top:4},
+  // Colours (top:5)
+  {id:'g91',w:'rot',ph:'/roːt/',tr:'red',ex:'"Die Rosen sind rot." – The roses are red.',tag:'Colour',g:'',top:5},
+  {id:'g92',w:'blau',ph:'/blaʊ/',tr:'blue',ex:'"Der Himmel ist tiefblau." – The sky is deep blue.',tag:'Colour',g:'',top:5},
+  {id:'g93',w:'grün',ph:'/ɡryːn/',tr:'green',ex:'"Der Garten ist im Frühling sehr grün." – The garden is very green in spring.',tag:'Colour',g:'',top:5},
+  {id:'g94',w:'gelb',ph:'/ɡɛlp/',tr:'yellow',ex:'"Die Sonnenblumen sind gelb." – The sunflowers are yellow.',tag:'Colour',g:'',top:5},
+  {id:'g95',w:'weiß',ph:'/vaɪs/',tr:'white',ex:'"Der Schnee ist weiß." – The snow is white.',tag:'Colour',g:'',top:5},
+  {id:'g96',w:'schwarz',ph:'/ʃvaʁts/',tr:'black',ex:'"Ich trinke meinen Kaffee schwarz." – I drink my coffee black.',tag:'Colour',g:'',top:5},
+  {id:'g97',w:'rund',ph:'/rʊnt/',tr:'round',ex:'"Der Tisch ist rund." – The table is round.',tag:'Shape',g:'',top:5},
+  {id:'g98',w:'die Farbe',ph:'/diː ˈfaʁbə/',tr:'the colour',ex:'"Was ist deine Lieblingsfarbe?" – What is your favourite colour?',tag:'Noun',g:'die',top:5},
+  {id:'g99',w:'dunkel',ph:'/ˈdʊŋkəl/',tr:'dark',ex:'"Der Himmel ist heute Nacht sehr dunkel." – The sky is very dark tonight.',tag:'Adjective',g:'',top:5},
+  {id:'g100',w:'hell',ph:'/hɛl/',tr:'bright / light',ex:'"Was für ein heller Tag!" – What a bright day!',tag:'Adjective',g:'',top:5},
+  // Numbers & Time (top:6)
+  {id:'g101',w:'Wie spät ist es?',ph:'/viː ʃpɛːt ɪst ɛs/',tr:'What time is it?',ex:'"Wie spät ist es?" – "Es ist drei Uhr."',tag:'Phrase',g:'',top:6},
+  {id:'g102',w:'halb',ph:'/halp/',tr:'half (past) – Note: halb acht = 7:30!',ex:'"Es ist halb acht." – It is half past seven.',tag:'Time',g:'',top:6},
+  {id:'g103',w:'das Viertel',ph:'/das ˈfɪrtəl/',tr:'the quarter',ex:'"Es ist Viertel nach zehn." – It is a quarter past ten.',tag:'Noun',g:'das',top:6},
+  {id:'g104',w:'die Mitternacht',ph:'/diː ˈmɪtərˌnaxt/',tr:'midnight',ex:'"Das Konzert endet um Mitternacht." – The concert ends at midnight.',tag:'Noun',g:'die',top:6},
+  {id:'g105',w:'der Mittag',ph:'/deːr ˈmɪtaːk/',tr:'noon / midday',ex:'"Wir treffen uns um Mittag." – We meet at noon.',tag:'Noun',g:'der',top:6},
+  {id:'g106',w:'hundert',ph:'/ˈhʊndərt/',tr:'hundred (100)',ex:'"Es gibt hundert Seiten." – There are a hundred pages.',tag:'Number',g:'',top:6},
+  {id:'g107',w:'tausend',ph:'/ˈtaʊzənt/',tr:'thousand (1,000)',ex:'"Tausend Menschen nahmen teil." – A thousand people attended.',tag:'Number',g:'',top:6},
+  {id:'g108',w:'erst-',ph:'/eːrst/',tr:'first',ex:'"Das ist mein erster Besuch." – This is my first visit.',tag:'Ordinal',g:'',top:6},
+  {id:'g109',w:'letzt-',ph:'/lɛtst/',tr:'last',ex:'"Das war der letzte Zug." – That was the last train.',tag:'Ordinal',g:'',top:6},
+  {id:'g110',w:'zweimal',ph:'/ˈtsvaɪˌmaːl/',tr:'twice',ex:'"Nehmen Sie das Medikament zweimal täglich." – Take the medicine twice a day.',tag:'Adverb',g:'',top:6}
+];
+
+var topicNames = {1:'Basics',2:'Food',3:'Travel',4:'Health',5:'Colours',6:'Numbers'};
+var topicColors = {1:'#42a5f5',2:'#f5a623',3:'#4ecdc4',4:'#81c784',5:'#ba68c8',6:'#64b5f6'};
+
+var grammar = [
+  {q:'___ Haus ist sehr groß.',blank:'Das',opts:['Der','Die','Das','Den'],ok:2,ex:"'Haus' is neuter → das Haus. German has 3 genders: der (m), die (f), das (n)."},
+  {q:'Ich ___ aus England.',blank:'bin',opts:['ist','bin','bist','sind'],ok:1,ex:"'to be' = sein: ich BIN, du bist, er/sie ist, wir sind."},
+  {q:'Sie ___ gerade in der Küche.',blank:'ist',opts:['bin','bist','ist','sind'],ok:2,ex:"'sie' (she) takes 'ist'. ich bin, du bist, er/sie/es IST."},
+  {q:'Hast ___ ein Auto?',blank:'du',opts:['Sie','du','er','ich'],ok:1,ex:"Informal: du hast. Formal: Sie haben. This is informal (du-Form)."},
+  {q:'Ich ___ einen Kaffee, bitte.',blank:'möchte',opts:['will','möchte','mag','kann'],ok:1,ex:"'möchte' (would like) is more polite than 'will' (want). Use it in shops!"},
+  {q:'Der Zug fährt ___ neun Uhr ab.',blank:'um',opts:['an','um','in','bei'],ok:1,ex:"For times: use 'um'. Der Zug fährt um 9 Uhr ab. Um drei Uhr."},
+  {q:'Ich ___ Deutsch seit einem Jahr.',blank:'lerne',opts:['lernt','lerne','lernen','lernst'],ok:1,ex:"'lernen' with 'ich': ich lerne, du lernst, er lernt, wir lernen."},
+  {q:'Sprechen Sie ___ Englisch?',blank:'auch',opts:['noch','auch','schon','gern'],ok:1,ex:"'auch' = also/too. 'Sprechen Sie auch Englisch?' = Do you also speak English?"},
+  {q:'Das ___ mir sehr gut gefallen.',blank:'hat',opts:['ist','hat','bin','habe'],ok:1,ex:"Perfect tense with 'gefallen': Das hat mir gefallen. (I liked that.)"},
+  {q:'Wo ___ der Bahnhof?',blank:'ist',opts:['sind','bin','ist','bist'],ok:2,ex:"'der Bahnhof' is singular → 'ist'. Wo ist...? = Where is...?"},
+  {q:'Ich ___ morgen ins Kino gehen.',blank:'möchte',opts:['will','möchte','kann','darf'],ok:1,ex:"'möchte + infinitive' expresses a wish: Ich möchte ... gehen."},
+  {q:'Es ___ heute sehr kalt.',blank:'ist',opts:['hat','ist','bin','sind'],ok:1,ex:"Weather: Es ist kalt / warm / sonnig. Always 'es ist' for weather."}
+];
+
+// ==================== SRS SYSTEM ====================
+var SRS_KEY = 'de_srs_v1';
+var STATS_KEY = 'de_stats_v1';
+var CUSTOM_KEY = 'de_custom_v1';
+var GOAL_KEY = 'de_goal_v1';
+
+var srsData = {};
+var statsData = {totalCorrect:0, totalWrong:0, streak:0, lastDate:''};
+var customWords = [];
+var dailyGoal = 10;
+var todayDone = 0;
+
+function loadAll() {
+  try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); } catch(e){ srsData = {}; }
+  try { statsData = JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); } catch(e){}
+  if (!statsData.totalCorrect) statsData.totalCorrect = 0;
+  if (!statsData.totalWrong) statsData.totalWrong = 0;
+  if (!statsData.streak) statsData.streak = 0;
+  if (!statsData.lastDate) statsData.lastDate = '';
+  try { customWords = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch(e){ customWords = []; }
+  dailyGoal = parseInt(localStorage.getItem(GOAL_KEY) || '10');
+  var todayKey = localStorage.getItem('de_today_date');
+  if (todayKey === todayStr()) {
+    todayDone = parseInt(localStorage.getItem('de_today_count') || '0');
+  } else {
+    todayDone = 0;
+    localStorage.setItem('de_today_date', todayStr());
+    localStorage.setItem('de_today_count', '0');
+  }
+  var sel = document.getElementById('goalSelect');
+  if (sel) sel.value = dailyGoal;
+}
+
+function saveAll() {
+  try { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); } catch(e){}
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(statsData)); } catch(e){}
+  try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customWords)); } catch(e){}
+  localStorage.setItem('de_today_count', todayDone);
+}
+
+function setGoal(val) { dailyGoal = parseInt(val); localStorage.setItem(GOAL_KEY, dailyGoal); updateHomeStats(); }
+function todayStr() { var d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function getCardSRS(id) { if (!srsData[id]) srsData[id] = {interval:0,ease:2.5,due:todayStr(),correct:0,wrong:0,seen:false}; return srsData[id]; }
+function isDue(id) { var s = getCardSRS(id); return !s.seen || s.due <= todayStr(); }
+function nextDueDate(days) { var d = new Date(); d.setDate(d.getDate()+days); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+
+function updateSRS(id, rating) {
+  var s = getCardSRS(id);
+  s.seen = true;
+  if (rating === 0) { s.wrong++; s.interval = 1; s.ease = Math.max(1.3,s.ease-0.2); s.due = nextDueDate(1); statsData.totalWrong++; }
+  else if (rating === 1) { s.correct++; s.interval = Math.max(1,s.interval); s.ease = Math.max(1.3,s.ease-0.1); s.due = nextDueDate(s.interval); statsData.totalCorrect++; }
+  else { s.correct++; if (s.interval===0) s.interval=1; else if(s.interval===1) s.interval=3; else s.interval=Math.round(s.interval*s.ease); s.ease=Math.min(3.0,s.ease+0.1); s.due=nextDueDate(s.interval); statsData.totalCorrect++; }
+  todayDone++;
+  localStorage.setItem('de_today_count', todayDone);
+  var today = todayStr();
+  if (statsData.lastDate !== today) { statsData.streak++; statsData.lastDate = today; }
+  saveAll(); updateHomeStats();
+}
+
+function getAllCards() {
+  var all = vocab.slice();
+  for (var i = 0; i < customWords.length; i++) {
+    var w = customWords[i];
+    all.push({id:w.id, w:w.w, ph:'', tr:w.en, ex:w.ex, tag:'My Word', g:'', top:99, custom:true});
+  }
+  return all;
+}
+
+function getDueCount() { var all = getAllCards(); var c = 0; for (var i = 0; i < all.length; i++) { if (isDue(all[i].id)) c++; } return c; }
+
+function updateHomeStats() {
+  var all = getAllCards();
+  var seen = 0;
+  for (var i = 0; i < all.length; i++) { if (srsData[all[i].id] && srsData[all[i].id].seen) seen++; }
+  var total = statsData.totalCorrect + statsData.totalWrong;
+  var acc = total > 0 ? Math.round((statsData.totalCorrect/total)*100) : 0;
+  document.getElementById('stat-seen').textContent = seen;
+  document.getElementById('stat-acc').textContent = acc + '%';
+  document.getElementById('stat-streak').textContent = statsData.streak;
+  document.getElementById('dueCount').textContent = getDueCount();
+  var gpct = Math.min(100, Math.round((todayDone/dailyGoal)*100));
+  document.getElementById('goalFill').style.width = gpct + '%';
+  document.getElementById('goalNums').textContent = todayDone + ' / ' + dailyGoal + ' cards';
+  var ppct = Math.min(100, Math.round((seen/all.length)*100));
+  document.getElementById('globalProgress').style.width = ppct + '%';
+}
+
+function switchTab(name) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  var tabs = document.querySelectorAll('.nav-tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'stats') updateStatsPage();
+  if (name === 'mywords') renderCustomList();
+  if (name === 'dame') buildDialogues();
+  if (name === 'home') updateHomeStats();
+}
+
+function startReview() { switchTab('vocab'); setTopic(0); }
+
+var activeTopic = 0, cardOrder = [], currentCard = 0, cardRevealed = false;
+
+function setTopic(t) {
+  activeTopic = t;
+  for (var i = 0; i <= 6; i++) { var el = document.getElementById('chip-'+i); if (el) el.classList.remove('active'); }
+  var c99 = document.getElementById('chip-99'); if (c99) c99.classList.remove('active');
+  var chip = document.getElementById(t===99?'chip-99':'chip-'+t); if (chip) chip.classList.add('active');
+  var all = getAllCards();
+  var filtered = [];
+  for (var i = 0; i < all.length; i++) { if (t===0||all[i].top===t) filtered.push(i); }
+  filtered.sort(function(a,b){ var da=isDue(all[a].id),db=isDue(all[b].id); if(da&&!db) return -1; if(!da&&db) return 1; return 0; });
+  cardOrder = filtered; currentCard = 0; showCard(0);
+}
+
+function showCard(idx) {
+  if (cardOrder.length === 0) { document.getElementById('cardCount').textContent = 'No cards'; return; }
+  var all = getAllCards();
+  var card = all[cardOrder[idx]];
+  var srs = getCardSRS(card.id);
+  // Gender badge
+  var gb = document.getElementById('fcGender');
+  if (card.g) {
+    var cls = card.g==='der'?'fc-gm':card.g==='die'?'fc-gf':'fc-gn';
+    gb.innerHTML = '<span class="fc-gender '+cls+'">'+card.g+'</span>';
+  } else { gb.innerHTML = ''; }
+  document.getElementById('fcTag').textContent = (card.tag||'Word')+(card.custom?' · My Word':'');
+  document.getElementById('fcWord').textContent = card.w;
+  document.getElementById('fcPhonetic').textContent = card.ph || '';
+  document.getElementById('fcTrans').textContent = card.tr;
+  document.getElementById('fcEx').textContent = card.ex || '';
+  document.getElementById('cardCount').textContent = 'Card '+(idx+1)+' of '+cardOrder.length;
+  var badge = document.getElementById('srsBadge');
+  var srsInfo = document.getElementById('srsInfo');
+  if (!srs.seen) { badge.innerHTML = '<span class="srs-pill srs-new">NEW</span>'; srsInfo.textContent = 'First encounter'; }
+  else if (isDue(card.id)) { badge.innerHTML = '<span class="srs-pill srs-due">DUE</span>'; srsInfo.textContent = 'Correct: '+srs.correct+' | Wrong: '+srs.wrong+' | Interval: '+srs.interval+' days'; }
+  else { badge.innerHTML = '<span class="srs-pill srs-learned">LEARNED</span>'; srsInfo.textContent = 'Next review: '+srs.due; }
+  document.getElementById('flashcard').classList.remove('revealed');
+  document.getElementById('cardActions').style.display = 'none';
+  document.getElementById('revealAction').style.display = 'flex';
+  cardRevealed = false;
+}
+
+function revealCard() {
+  if (cardRevealed) return;
+  cardRevealed = true;
+  document.getElementById('flashcard').classList.add('revealed');
+  document.getElementById('cardActions').style.display = 'flex';
+  document.getElementById('revealAction').style.display = 'none';
+}
+
+function rateCard(rating) {
+  var all = getAllCards();
+  var card = all[cardOrder[currentCard]];
+  updateSRS(card.id, rating);
+  setTopic(activeTopic);
+  if (currentCard >= cardOrder.length) currentCard = 0;
+  showCard(currentCard);
+}
+
+function speakCard(e) {
+  e.stopPropagation();
+  var all = getAllCards();
+  say(all[cardOrder[currentCard]].w);
+}
+
+function say(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'de-DE'; utt.rate = 0.88;
+  var voices = window.speechSynthesis.getVoices();
+  for (var i = 0; i < voices.length; i++) { if (voices[i].lang.indexOf('de') === 0) { utt.voice = voices[i]; break; } }
+  window.speechSynthesis.speak(utt);
+}
+
+// GRAMMAR
+var gramAnswered = 0, gramCorrect = 0;
+var gramBuilt = false;
+
+function buildGrammar() {
+  if (gramBuilt) return;
+  gramBuilt = true;
+  var container = document.getElementById('gramExercises');
+  container.innerHTML = '';
+  gramAnswered = 0; gramCorrect = 0;
+  for (var i = 0; i < grammar.length; i++) {
+    var ex = grammar[i];
+    var div = document.createElement('div');
+    div.className = 'exercise-card';
+    var qHtml = ex.q.replace('___','<span class="blank" id="bl-'+i+'">___</span>');
+    var optsHtml = '';
+    for (var j = 0; j < ex.opts.length; j++) {
+      optsHtml += '<button class="opt-btn" id="opt-'+i+'-'+j+'" onclick="checkAns('+i+','+j+')">'+ex.opts[j]+'</button>';
+    }
+    div.innerHTML = '<div class="exercise-num">Exercise '+(i+1)+' of '+grammar.length+'</div><div class="exercise-q">'+qHtml+'</div><div class="options-grid">'+optsHtml+'</div><div class="feedback" id="fb-'+i+'"></div>';
+    container.appendChild(div);
+  }
+}
+
+function checkAns(exIdx, optIdx) {
+  var ex = grammar[exIdx];
+  var isOk = optIdx === ex.ok;
+  var allOpts = document.querySelectorAll('[id^="opt-'+exIdx+'-"]');
+  for (var i = 0; i < allOpts.length; i++) allOpts[i].disabled = true;
+  document.getElementById('opt-'+exIdx+'-'+optIdx).classList.add(isOk?'ok':'fail');
+  if (!isOk) document.getElementById('opt-'+exIdx+'-'+ex.ok).classList.add('show');
+  document.getElementById('bl-'+exIdx).textContent = ex.blank;
+  var fb = document.getElementById('fb-'+exIdx);
+  fb.textContent = (isOk?'Correct! ':'Not quite. ')+ex.ex;
+  fb.className = 'feedback '+(isOk?'ok':'fail');
+  gramAnswered++; if (isOk) gramCorrect++;
+  if (gramAnswered === grammar.length) {
+    setTimeout(function() {
+      document.getElementById('scoreNum').textContent = gramCorrect+'/'+grammar.length;
+      document.getElementById('gramScore').classList.add('visible');
+      document.getElementById('gramScore').scrollIntoView({behavior:'smooth'});
+    }, 600);
+  }
+}
+
+function resetGrammar() { gramBuilt = false; buildGrammar(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// FRAU DR. MÜLLER
+var muellerDialogues = [
+  {topic:'Das Wetter – The Weather',icon:'☀️',lines:[
+    {sp:'Dr. Müller',text:'Guten Morgen! Was für ein herrlicher Tag heute, finden Sie nicht? Die Sonne scheint einfach wunderbar.',trans:'Good morning! What a splendid day today, don\'t you think? The sun is simply wonderful.'},
+    {sp:'You say',text:'Ja, das Wetter ist wirklich schön! Ich liebe solche Tage.',trans:'Yes, the weather is really beautiful! I love such days.'},
+    {sp:'Dr. Müller',text:'Ich auch! Bei diesem Wetter gehe ich am liebsten im Park spazieren und genieße die Natur.',trans:'Me too! In this weather I love to walk in the park and enjoy nature.'},
+    {sp:'You say',text:'Das klingt wunderbar! Sollen wir zusammen gehen?',trans:'That sounds wonderful! Shall we go together?'}
+  ]},
+  {topic:'Reisen – Travel',icon:'✈️',lines:[
+    {sp:'Dr. Müller',text:'Waren Sie schon einmal in Deutschland? Ich empfehle besonders München – eine wunderbare Stadt!',trans:'Have you been to Germany before? I especially recommend Munich – a wonderful city!'},
+    {sp:'You say',text:'Noch nicht, aber ich möchte sehr gerne. Was sollte man dort unbedingt sehen?',trans:'Not yet, but I would very much like to. What should one definitely see there?'},
+    {sp:'Dr. Müller',text:'Das Englische Garten ist ein Muss! Und natürlich das Hofbräuhaus – obwohl ich persönlich lieber kleine Cafés bevorzuge.',trans:'The English Garden is a must! And of course the Hofbräuhaus – although I personally prefer small cafés.'},
+    {sp:'You say',text:'Das klingt fantastisch! Wann wäre die beste Reisezeit?',trans:'That sounds fantastic! When would be the best time to travel?'}
+  ]},
+  {topic:'Musik & Kultur – Music & Culture',icon:'🎼',lines:[
+    {sp:'Dr. Müller',text:'Ich war letzte Woche in der Oper – eine großartige Aufführung von Beethovens Fidelio! Mögen Sie klassische Musik?',trans:'I was at the opera last week – a magnificent performance of Beethoven\'s Fidelio! Do you like classical music?'},
+    {sp:'You say',text:'Ja, sehr! Ich liebe Beethoven und auch Bach. Haben Sie eine Lieblingskomposition?',trans:'Yes, very much! I love Beethoven and also Bach. Do you have a favourite composition?'},
+    {sp:'Dr. Müller',text:'Das ist eine schwierige Frage! Beethovens Neunte Sinfonie berührt mich jedes Mal aufs Neue.',trans:'That\'s a difficult question! Beethoven\'s Ninth Symphony moves me anew every time.'},
+    {sp:'You say',text:'Die Neunte ist wirklich atemberaubend. Musik verbindet Menschen auf besondere Weise.',trans:'The Ninth is truly breathtaking. Music connects people in a special way.'}
+  ]},
+  {topic:'Essen & Trinken – Food & Drink',icon:'🍽️',lines:[
+    {sp:'Dr. Müller',text:'Ich habe ein wunderbares bayerisches Restaurant entdeckt! Das Essen war vorzüglich. Kochen Sie gerne?',trans:'I\'ve discovered a wonderful Bavarian restaurant! The food was excellent. Do you enjoy cooking?'},
+    {sp:'You say',text:'Ja, ich koche sehr gerne! Ich versuche oft, deutsche Gerichte nachzukochen.',trans:'Yes, I love cooking! I often try to recreate German dishes at home.'},
+    {sp:'Dr. Müller',text:'Ausgezeichnet! Haben Sie schon Sauerbraten oder Spätzle versucht? Das sind echte Klassiker.',trans:'Excellent! Have you tried Sauerbraten or Spätzle yet? Those are real classics.'},
+    {sp:'You say',text:'Spätzle habe ich gemacht – lecker! Sauerbraten steht noch auf meiner Liste.',trans:'I\'ve made Spätzle – delicious! Sauerbraten is still on my list.'}
+  ]},
+  {topic:'Literatur – Literature',icon:'📚',lines:[
+    {sp:'Dr. Müller',text:'Als Germanistikprofessorin frage ich natürlich: Kennen Sie Goethe? "Faust" ist ein unverzichtbares Werk!',trans:'As a German literature professor I must ask: Do you know Goethe? "Faust" is an indispensable work!'},
+    {sp:'You say',text:'Ich habe "Faust" auf Englisch gelesen. Es ist ein faszinierendes Werk über das menschliche Streben.',trans:'I\'ve read "Faust" in English. It\'s a fascinating work about human ambition.'},
+    {sp:'Dr. Müller',text:'Sehr gut! Vielleicht versuchen Sie irgendwann die deutsche Version – Goethes Sprache ist wirklich außergewöhnlich schön.',trans:'Very good! Perhaps you\'ll try the German version some day – Goethe\'s language is truly exceptionally beautiful.'},
+    {sp:'You say',text:'Das ist mein Ziel! Zuerst muss ich mein Deutsch verbessern.',trans:'That is my goal! First I need to improve my German.'}
+  ]},
+  {topic:'Philosophie – Philosophy',icon:'🤔',lines:[
+    {sp:'Dr. Müller',text:'Ich beschäftige mich gerne mit Kant. Seine Frage "Was kann ich wissen?" ist zeitlos aktuell, finden Sie nicht?',trans:'I enjoy studying Kant. His question "What can I know?" is timeless, don\'t you think?'},
+    {sp:'You say',text:'Absolut. Ich denke, das Wichtigste ist, immer neugierig zu bleiben und zu lernen.',trans:'Absolutely. I think the most important thing is to always stay curious and keep learning.'},
+    {sp:'Dr. Müller',text:'Wunderbar gesagt! Kant würde zustimmen. Bildung ist die Grundlage aller Freiheit.',trans:'Beautifully said! Kant would agree. Education is the foundation of all freedom.'},
+    {sp:'You say',text:'Deshalb lerne ich Deutsch – um meinen Horizont zu erweitern!',trans:'That is why I am learning German – to broaden my horizons!'}
+  ]},
+  {topic:'Technologie – Technology',icon:'💻',lines:[
+    {sp:'Dr. Müller',text:'Diese Sprachlern-Apps sind wirklich bemerkenswert! Technologie kann die Bildung revolutionieren, meinen Sie nicht?',trans:'These language learning apps are truly remarkable! Technology can revolutionise education, don\'t you think?'},
+    {sp:'You say',text:'Ja, definitiv! Ich lerne Deutsch viel schneller mit diesen digitalen Werkzeugen.',trans:'Yes, definitely! I\'m learning German much faster with these digital tools.'},
+    {sp:'Dr. Müller',text:'Allerdings – ich bestehe darauf, dass das Gespräch mit echten Menschen unersetzlich bleibt.',trans:'However – I insist that conversation with real people remains irreplaceable.'},
+    {sp:'You say',text:'Da haben Sie völlig Recht! Deshalb spreche ich mit Ihnen.',trans:'You are absolutely right! That is why I am speaking with you.'}
+  ]},
+  {topic:'Alltag – Everyday Life',icon:'🌇',lines:[
+    {sp:'Dr. Müller',text:'Was machen Sie in Ihrer Freizeit? Ich persönlich lese, spiele Klavier und gehe gerne segeln.',trans:'What do you do in your free time? I personally read, play piano and enjoy sailing.'},
+    {sp:'You say',text:'Ich lese auch sehr gerne! Außerdem fahre ich Fahrrad und arbeite im Garten.',trans:'I also love reading very much! In addition I cycle and work in the garden.'},
+    {sp:'Dr. Müller',text:'Gartenarbeit ist wunderbar – Goethe selbst hatte einen großen Garten in Weimar!',trans:'Gardening is wonderful – Goethe himself had a large garden in Weimar!'},
+    {sp:'You say',text:'Das wusste ich nicht! Eine weitere Gemeinsamkeit mit dem großen Dichter.',trans:'I didn\'t know that! Another thing in common with the great poet.'}
+  ]}
+];
+
+var MUELLER_PROMPT = 'Sie sind Frau Dr. Müller, eine kluge, direkte und charmante Professorin für Germanistik an einer deutschen Universität. Sie lieben Gespräche über Literatur, Musik, Philosophie, Reisen, Technologie und den deutschen Alltag. Sie helfen dem Gesprächspartner, sein Deutsch zu üben und zu verbessern. Antworten Sie AUSSCHLIESSLICH auf Deutsch, maximal 2-3 Sätze. Wenn der Gesprächspartner einen grammatischen Fehler macht, korrigieren Sie ihn freundlich, indem Sie die korrekte Form natürlich in Ihre Antwort einfließen lassen. Seien Sie geistreich, präzise und ermutigend.';
+
+var chatHistory = [];
+var dameBuilt = false;
+
+function showDameTab(tab, ev) {
+  var btns = document.querySelectorAll('.dame-tab-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  if (ev && ev.target) ev.target.classList.add('active');
+  document.getElementById('dame-dialogues').style.display = tab === 'dialogues' ? 'block' : 'none';
+  document.getElementById('dame-chat').style.display = tab === 'chat' ? 'block' : 'none';
+}
+
+function buildDialogues() {
+  if (dameBuilt) return;
+  dameBuilt = true;
+  var container = document.getElementById('dame-dialogues');
+  container.innerHTML = '';
+  for (var i = 0; i < muellerDialogues.length; i++) {
+    var d = muellerDialogues[i];
+    var card = document.createElement('div');
+    card.className = 'dialogue-card';
+    card.setAttribute('data-idx', i);
+    var body = '<div class="d-body" id="dbody-'+i+'">';
+    for (var j = 0; j < d.lines.length; j++) {
+      var line = d.lines[j];
+      var isUser = line.sp === 'You say';
+      body += '<div class="d-line"><div class="d-speaker'+(isUser?' user-speaker':'')+'">'+line.sp+'</div>';
+      body += '<div class="d-text">'+line.text+'</div>';
+      body += '<div class="d-trans">'+line.trans+'</div>';
+      if (!isUser) body += '<button class="d-tts" onclick="sayLine(\''+line.text.replace(/'/g,"\\'").replace(/"/g,'')+"',this)\">🔊 Listen</button>";
+      body += '</div>';
+    }
+    body += '</div>';
+    card.innerHTML = '<div class="d-topic-header"><div><div class="d-topic-label">'+d.icon+' Topic '+(i+1)+'</div><div class="d-title">'+d.topic+'</div></div><div style="color:var(--muted)" id="dtoggle-'+i+'">▸</div></div>'+body;
+    card.addEventListener('click', function(e) {
+      if (e.target.classList.contains('d-tts')) return;
+      var idx = this.getAttribute('data-idx');
+      var b = document.getElementById('dbody-'+idx);
+      var t = document.getElementById('dtoggle-'+idx);
+      b.classList.toggle('open');
+      t.textContent = b.classList.contains('open') ? '▾' : '▸';
+    });
+    container.appendChild(card);
+  }
+}
+
+function sayLine(text, btn) {
+  var orig = btn.textContent;
+  btn.textContent = '🔊 ...';
+  say(text);
+  setTimeout(function(){ btn.textContent = orig; }, 3000);
+}
+
+async function sendMessage() {
+  var input = document.getElementById('chatInput');
+  var msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  chatHistory.push({role:'user', content:msg});
+  var container = document.getElementById('chatContainer');
+  var ub = document.createElement('div');
+  ub.className = 'chat-bubble chat-user'; ub.textContent = msg;
+  container.appendChild(ub);
+  var thinking = document.createElement('div');
+  thinking.className = 'chat-thinking'; thinking.textContent = 'Dr. Müller denkt nach...';
+  container.appendChild(thinking);
+  container.scrollTop = container.scrollHeight;
+  try {
+    var messages = [{role:'system',content:MUELLER_PROMPT}].concat(chatHistory);
+    var response = await fetch('https://text.pollinations.ai/openai', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'openai-large', messages:messages, temperature:0.8, max_tokens:150})
+    });
+    var data = await response.json();
+    var reply = data.choices && data.choices[0] ? data.choices[0].message.content : 'Entschuldigung – ich habe kurz die Verbindung verloren. Bitte versuchen Sie es noch einmal.';
+    container.removeChild(thinking);
+    chatHistory.push({role:'assistant', content:reply});
+    var db = document.createElement('div');
+    db.className = 'chat-bubble chat-dame'; db.textContent = reply;
+    container.appendChild(db);
+    container.scrollTop = container.scrollHeight;
+    say(reply);
+  } catch(e) {
+    container.removeChild(thinking);
+    var eb = document.createElement('div');
+    eb.className = 'chat-bubble chat-dame';
+    eb.textContent = 'Entschuldigung – die Verbindung ist unterbrochen. Bitte versuchen Sie es in einem Moment erneut.';
+    container.appendChild(eb);
+    container.scrollTop = container.scrollHeight;
+  }
+}
+
+// MY WORDS
+async function translateWord() {
+  var english = document.getElementById('inp-english').value.trim();
+  if (!english) { alert('Please enter an English word first.'); return; }
+  var btn = document.getElementById('btn-translate');
+  var status = document.getElementById('translate-status');
+  btn.textContent = '⏳...'; btn.disabled = true;
+  status.textContent = 'Translating...'; status.style.color = 'var(--accent2)';
+  var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(english) + '&langpair=en|de';
+  async function tryT() { var r = await fetch(url); var d = await r.json(); if (d.responseData && d.responseData.translatedText) return d.responseData.translatedText; return null; }
+  try {
+    var result = await tryT();
+    if (!result) { status.textContent = 'Retrying...'; await new Promise(function(r){setTimeout(r,3000);}); result = await tryT(); }
+    if (result) {
+      document.getElementById('inp-german').value = result;
+      status.textContent = 'German word filled in! Add example sentence optionally.';
+      status.style.color = 'var(--correct)';
+    } else { status.textContent = 'Please wait 10 seconds and try again.'; status.style.color = '#ff6b6b'; }
+  } catch(e) { status.textContent = 'Please wait 10 seconds and try again.'; status.style.color = '#ff6b6b'; }
+  btn.textContent = '🔄 Translate'; btn.disabled = false;
+}
+
+async function translateExample() {
+  var english = document.getElementById('inp-example-en').value.trim();
+  if (!english) { alert('Please enter an English example sentence.'); return; }
+  var btn = document.getElementById('btn-translate-ex');
+  var status = document.getElementById('translate-ex-status');
+  btn.textContent = '⏳...'; btn.disabled = true;
+  status.textContent = 'Translating...'; status.style.color = 'var(--accent2)';
+  var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(english) + '&langpair=en|de';
+  try {
+    var r = await fetch(url);
+    var d = await r.json();
+    if (d.responseData && d.responseData.translatedText) {
+      document.getElementById('inp-example-de').value = d.responseData.translatedText;
+      status.textContent = 'German example sentence added!';
+      status.style.color = 'var(--correct)';
+    } else { status.textContent = 'Please try again.'; status.style.color = '#ff6b6b'; }
+  } catch(e) { status.textContent = 'Please check your internet connection.'; status.style.color = '#ff6b6b'; }
+  btn.textContent = '🔄 Translate'; btn.disabled = false;
+}
+
+function addCustomWord() {
+  var german = document.getElementById('inp-german').value.trim();
+  var english = document.getElementById('inp-english').value.trim();
+  var exDe = document.getElementById('inp-example-de').value.trim();
+  var exEn = document.getElementById('inp-example-en').value.trim();
+  if (!german || !english) { alert('Please enter both an English word and its German translation.'); return; }
+  var id = 'c' + Date.now();
+  customWords.push({id:id, w:german, en:english, ex:exDe+(exEn?' – '+exEn:'')});
+  saveAll();
+  document.getElementById('inp-german').value = '';
+  document.getElementById('inp-english').value = '';
+  document.getElementById('inp-example-de').value = '';
+  document.getElementById('inp-example-en').value = '';
+  document.getElementById('translate-status').textContent = '';
+  document.getElementById('translate-ex-status').textContent = '';
+  renderCustomList(); updateHomeStats();
+  alert('Word added! It appears in your study rotation under "✏️ Mine".');
+}
+
+function renderCustomList() {
+  var container = document.getElementById('customList');
+  if (customWords.length === 0) { container.innerHTML = '<div class="empty-state">No custom words yet.<br>Enter an English word and tap Translate!</div>'; return; }
+  container.innerHTML = '';
+  for (var i = 0; i < customWords.length; i++) {
+    var w = customWords[i];
+    var div = document.createElement('div');
+    div.className = 'custom-item';
+    var info = document.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0';
+    info.innerHTML = '<div class="custom-word">'+w.w+'</div><div class="custom-en">'+w.en+'</div><div class="custom-ph">'+(w.ex||'')+'</div>';
+    var speakBtn = document.createElement('button');
+    speakBtn.style.cssText = 'background:rgba(78,205,196,0.15);border:1px solid rgba(78,205,196,0.3);color:var(--accent2);border-radius:8px;padding:8px 10px;font-size:1rem;cursor:pointer;flex-shrink:0;margin-right:6px;';
+    speakBtn.textContent = '🔊';
+    speakBtn.setAttribute('data-word', w.w);
+    speakBtn.addEventListener('click', function() { say(this.getAttribute('data-word')); });
+    var btn = document.createElement('button');
+    btn.className = 'btn-delete'; btn.textContent = 'Delete';
+    btn.setAttribute('data-id', w.id);
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-id');
+      for (var j = 0; j < customWords.length; j++) { if (customWords[j].id === id) { customWords.splice(j,1); break; } }
+      if (srsData[id]) delete srsData[id];
+      saveAll(); renderCustomList(); updateHomeStats();
+    });
+    div.appendChild(info); div.appendChild(speakBtn); div.appendChild(btn);
+    container.appendChild(div);
+  }
+}
+
+// STATS
+function updateStatsPage() {
+  var all = getAllCards();
+  var seen = 0, learned = 0, due = 0, newCards = 0;
+  var difficult = [];
+  var topicStats = {};
+  for (var t = 1; t <= 6; t++) topicStats[t] = {total:0, seen:0};
+  for (var i = 0; i < all.length; i++) {
+    var card = all[i];
+    var s = srsData[card.id];
+    if (card.top >= 1 && card.top <= 6) { topicStats[card.top].total++; if (s && s.seen) topicStats[card.top].seen++; }
+    if (!s || !s.seen) { newCards++; continue; }
+    seen++;
+    if (s.interval >= 7) learned++;
+    if (isDue(card.id)) due++;
+    if (s.wrong > 0) difficult.push({w:card.w, en:card.tr||card.en, wrong:s.wrong});
+  }
+  document.getElementById('st-seen').textContent = seen;
+  document.getElementById('st-learned').textContent = learned;
+  document.getElementById('st-correct').textContent = statsData.totalCorrect;
+  document.getElementById('st-wrong').textContent = statsData.totalWrong;
+  document.getElementById('st-due').textContent = due;
+  document.getElementById('st-new').textContent = newCards;
+  var total = statsData.totalCorrect + statsData.totalWrong;
+  var acc = total > 0 ? Math.round((statsData.totalCorrect/total)*100) : 0;
+  document.getElementById('accBar').style.width = acc+'%';
+  document.getElementById('accPct').textContent = acc+'%';
+  var tpContainer = document.getElementById('topicProgressBars');
+  tpContainer.innerHTML = '';
+  for (var t = 1; t <= 6; t++) {
+    var ts = topicStats[t];
+    var pct = ts.total > 0 ? Math.round((ts.seen/ts.total)*100) : 0;
+    var d = document.createElement('div');
+    d.className = 'topic-progress-item';
+    d.innerHTML = '<div class="topic-progress-label"><span>'+topicNames[t]+'</span><span class="topic-progress-pct">'+ts.seen+'/'+ts.total+' ('+pct+'%)</span></div><div class="topic-bar"><div class="topic-bar-fill" style="width:'+pct+'%;background:'+(topicColors[t]||'#42a5f5')+'"></div></div>';
+    tpContainer.appendChild(d);
+  }
+  difficult.sort(function(a,b){ return b.wrong-a.wrong; });
+  var diffList = document.getElementById('difficultList');
+  if (difficult.length === 0) { diffList.innerHTML = '<div class="empty-state">No mistakes yet – keep going!</div>'; }
+  else {
+    diffList.innerHTML = '';
+    var max = Math.min(5, difficult.length);
+    for (var i = 0; i < max; i++) {
+      var d2 = difficult[i];
+      var row = document.createElement('div');
+      row.className = 'difficult-item';
+      row.innerHTML = '<div><div class="difficult-word">'+d2.w+'</div><div class="difficult-en">'+d2.en+'</div></div><div class="difficult-score">'+d2.wrong+'x wrong</div>';
+      diffList.appendChild(row);
+    }
+  }
+}
+
+function resetAllData() {
+  if (!confirm('Really reset all progress?')) return;
+  srsData = {}; statsData = {totalCorrect:0,totalWrong:0,streak:0,lastDate:''}; todayDone = 0;
+  saveAll(); updateHomeStats(); updateStatsPage();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  try { loadAll(); } catch(e) {}
+  try { updateHomeStats(); } catch(e) {}
+  try { setTopic(0); } catch(e) {}
+  try { buildGrammar(); } catch(e) {}
+  try { renderCustomList(); } catch(e) {}
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+  }
+});
+</script>
+</body>
+</html>
